@@ -19,8 +19,6 @@ use App\Livewire\SearchCif\SurplusUwYear as SearchCifSurplusUwYear;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-use App\Livewire\Rosmin;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,7 +39,6 @@ Route::View('/stimulsoft', 'stimulsoft');
 
 Route::get('/login', Login::class)->name('login');
 
-
 Route::group(['middleware' => ['auth']], function ()
 {
 
@@ -58,6 +55,7 @@ Route::group(['middleware' => ['auth']], function ()
 
 
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::get('/production/Index', \App\Livewire\Production\Index::class)->name('production.index');
     Route::get('/production/long-term', LongTerm::class)->name('production.long-term');
     Route::get('/production/year', Year::class)->name('production.year');
 

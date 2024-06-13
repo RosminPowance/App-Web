@@ -17,7 +17,7 @@ class LongTermServiceImplement extends Service implements LongTermService
     $this->mvAgenRepository = $mvAgenRepository;
   }
 
-  public function getDataset()
+  public function getDataset($query = null)
   {
 
 

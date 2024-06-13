@@ -7,6 +7,6 @@ use LaravelEasyRepository\BaseService;
 interface OutstandingClaimService extends BaseService{
 
    
-    public function getDataset();
+    public function getDataset($query = null);
     
 }

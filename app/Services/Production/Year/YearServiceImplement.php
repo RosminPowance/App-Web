@@ -3,6 +3,7 @@
 namespace App\Services\Production\Year;
 
 use App\Repositories\MvAgen\MvAgenRepository;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 
@@ -16,7 +17,7 @@ class YearServiceImplement extends Service implements YearService
     $this->mvAgenRepository = $mvAgenRepository;
   }
 
-  public function getDataset()
+  public function getDataset($query = null)
   {
     $columns = array(
       "SOURCE_DATA"                 => "SOURCE_DATA",
@@ -54,10 +55,9 @@ class YearServiceImplement extends Service implements YearService
       "NETTO_GROSS_WRITTEN_PREMIUM" => "A.GPW + A.DISC + A.DISC2 + A.COMM + A.OC",
       "BIAYA_KANTOR_PUSAT"          => "A.BIAYA_KANTOR_PUSAT",
       "REINSURANCE"                 => "A.RI",
-      "RICOM"                      => "A.RICOM",
+      "RICOM"                       => "A.RICOM",
       "NETTO_WRITTEN_PREMIUM"       => "A.GPW + A.DISC + A.DISC2 + A.COMM + A.OC + A.RI + A.RICOM + A.BIAYA_KANTOR_PUSAT",
     );
-
 
     $builder = DB::table("Warehouse_Asm_SPK.dbo.PRODUCTION_TAHUNAN_ACC_GABUNGAN_VIEW AS A");
 
@@ -74,6 +74,45 @@ class YearServiceImplement extends Service implements YearService
     $builder->join("Warehouse_Asm_SPK.dbo.LST_MO AS MO", "A.LMO_ID", "=", "MO.LMO_ID", "LEFT OUTER");
     $builder->join("Warehouse_Asm_SPK.dbo.MST_CLIENT AS MC", "A.CLIENT_ID", "=", "MC.MCL_ID", "LEFT OUTER");
     $builder->join("Warehouse_Asm_SPK.dbo.LST_JENIS_COAS AS JN_COAS", "A.MDS_JN_COAS", "=", "JN_COAS.MDS_JN_COAS", "LEFT OUTER");
+
+    $beginDate = isset($query['BEGIN_DATE']) ? dmYtoYmd($query['BEGIN_DATE']) : null;
+    $endDate   = isset($query['END_DATE']) ? dmYtoYmd($query['END_DATE']) : null;
+
+    if ($beginDate && ! $endDate)
+    {
+      $raw = "CONVERT(DATE, SUBSTRING(A.B_DATE_TH, 1, LEN(A.B_DATE_TH)-3), 23) >= ?";
+      $builder->whereRaw($raw, [$beginDate]);
+    }
+    else if (! $beginDate && $endDate)
+    {
+      $raw = "CONVERT(DATE, SUBSTRING(A.E_DATE_TH, 1, LEN(A.E_DATE_TH)-3), 23) <= ?";
+      $builder->whereRaw($raw, [$endDate]);
+    }
+    else if ($beginDate && $endDate)
+    {
+      $beginRaw = "CONVERT(DATE, SUBSTRING(A.B_DATE_TH, 1, LEN(A.B_DATE_TH)-3), 23)";
+      $endRaw   = "CONVERT(DATE, SUBSTRING(A.E_DATE_TH, 1, LEN(A.E_DATE_TH)-3), 23)";
+      $builder->where(function ($qq) use ($beginDate, $endDate, $beginRaw, $endRaw)
+      {
+        $qq->where(function ($qqy) use ($beginDate, $endDate, $beginRaw, $endRaw)
+        {
+          $qqy->whereRaw("($beginRaw >= ? AND $beginRaw <= ?)", [$beginDate, $endDate]);
+          $qqy->whereRaw("($endRaw >= ?  AND $endRaw <= ?)", [$beginDate, $endDate]);
+        });
+
+        // $qq->Orwhere(function ($qqy) use ($beginDate, $endDate, $beginRaw, $endRaw)
+        // {
+        //   $qqy->whereRaw("(? >= $beginRaw AND ? <= $endRaw)", [$beginDate, $beginDate]);
+        //   $qqy->whereRaw("(? >= $beginRaw AND ? <= $endRaw)", [$endDate, $endDate]);
+        // });
+
+        // $qq->Orwhere(function ($qqy) use ($beginDate, $endDate, $beginRaw, $endRaw)
+        // {
+        //   $qqy->whereRaw("(? >= $beginRaw AND ? < $endRaw)", [$beginDate, $beginDate]);
+        //   $qqy->whereRaw("(? > $beginRaw AND ? <= $endRaw)", [$beginDate, $endDate]);
+        // });
+      });
+    }
 
     $dataset = $builder->limit(2000)->get();
     return $dataset;

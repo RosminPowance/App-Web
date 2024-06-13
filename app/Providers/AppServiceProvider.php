@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Http\Middleware\GenerateMenus;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 

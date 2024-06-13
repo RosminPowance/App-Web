@@ -3,6 +3,7 @@
 namespace App\Services\Claim\OutstandingClaim;
 
 use App\Repositories\MvAgen\MvAgenRepository;
+use Illuminate\Database\Query\Builder;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +20,7 @@ class OutstandingClaimServiceImplement extends Service implements OutstandingCla
    * Summary of getDataset
    * @return \Illuminate\Support\Collection
    */
-  public function getDataset()
+  public function getDataset($query = null)
   {
     $columns = array(
       "SOURCE_DATA"       => "SOURCE_DATA",
@@ -71,21 +72,55 @@ class OutstandingClaimServiceImplement extends Service implements OutstandingCla
 
     );
 
-    $builder = DB::table("Warehouse_Asm_SPK.dbo.ACCEPTEDCLAIM_GABUNGAN_VIEW AS A");
+    $builder = $this->builder();
 
     foreach ($columns as $alias => $column)
     {
       $builder->addSelect(DB::raw($column . " AS " . "[$alias]"));
     }
+
+    $beginDate = isset($query['BEGIN_DATE']) ? dmYtoYmd($query['BEGIN_DATE']) : null;
+    $endDate   = isset($query['END_DATE']) ? dmYtoYmd($query['END_DATE']) : null;
+
+    if ($beginDate && ! $endDate)
+    {
+      $raw = "CONVERT(DATE, SUBSTRING(A.B_DATE,1,LEN(A.B_DATE)-3), 23) >= ?";
+      $builder->whereRaw($raw, [$beginDate]);
+    }
+    else if (! $beginDate && $endDate)
+    {
+      $raw = "CONVERT(DATE, SUBSTRING(A.E_DATE,1,LEN(A.E_DATE)-3), 23) <= ?";
+      $builder->whereRaw($raw, [$endDate]);
+    }
+    else if ($beginDate && $endDate)
+    {
+      $beginRaw = "CONVERT(DATE, SUBSTRING(A.B_DATE,1,LEN(A.B_DATE)-3), 23)";
+      $endRaw   = "CONVERT(DATE, SUBSTRING(A.E_DATE,1,LEN(A.E_DATE)-3), 23)";
+      $builder->where(function ($qq) use ($beginDate, $endDate, $beginRaw, $endRaw)
+      {
+        $qq->where(function ($qqy) use ($beginDate, $endDate, $beginRaw, $endRaw)
+        {
+          $qqy->whereRaw("($beginRaw >= ? AND $beginRaw <= ?)", [$beginDate, $endDate]);
+          $qqy->whereRaw("($endRaw >= ?  AND $endRaw <= ?)", [$beginDate, $endDate]);
+        });
+      });
+    }
+
+    $dataset = $builder->get();
+    return $dataset;
+  }
+
+  public function builder()
+  {
+    $builder = DB::table("Warehouse_Asm_SPK.dbo.ACCEPTEDCLAIM_GABUNGAN_VIEW AS A");
+
     $builder->join("Warehouse_Asm_SPK.dbo.MV_AGEN AS MA", "A.LAG_AGEN_ID", "=", "MA.LAG_AGEN_ID");
     $builder->join("Warehouse_Asm_SPK.dbo.LST_CABANG AS LC", "A.LDC_ID", "=", "LC.LDC_ID");
     $builder->join("Warehouse_Asm_SPK.dbo.LST_BUSINESS AS LB", "A.LBU_ID", "=", "LB.LBU_ID");
     $builder->join("Warehouse_Asm_SPK.dbo.LST_GRP_BUSINESS AS LGB", "LB.LGB_ID", "=", "LGB.LGB_ID");
     $builder->join("Warehouse_Asm_SPK.dbo.MST_CLIENT AS MC", "A.CLIENT_ID", "=", "MC.MCL_ID", "LEFT OUTER");
-
-    $dataset = $builder->limit(2000)->get();
-    return $dataset;
-
+    $builder->limit(2000);
+    return $builder;
   }
 
 }

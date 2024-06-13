@@ -7,6 +7,6 @@ use LaravelEasyRepository\BaseService;
 interface RejectClaimService extends BaseService{
 
    
-    public function getDataset();
+    public function getDataset($query = null);
     
 }

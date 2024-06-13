@@ -6,5 +6,5 @@ use LaravelEasyRepository\BaseService;
 
 interface YearService extends BaseService{
 
-    public function getDataset();
+    public function getDataset($query = null);
 }

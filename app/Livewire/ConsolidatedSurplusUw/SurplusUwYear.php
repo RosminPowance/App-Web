@@ -27,7 +27,7 @@ class SurplusUwYear extends Component
 
     public function render()
     {
-        return view('livewire.consolidated-surplus-uw.surplus-uw-long-term');
+        return view('livewire.consolidated-surplus-uw.surplus-uw-year');
     }
 }
 

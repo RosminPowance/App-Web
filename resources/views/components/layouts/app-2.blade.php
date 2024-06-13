@@ -31,6 +31,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets-2/css/vendors/slick-theme.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('assets-2/css/vendors/scrollbar.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('assets-2/css/vendors/animate.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets-2/css/vendors/flatpickr/flatpickr.min.css') }}" />
+
     <!-- Plugins css Ends-->
     <!-- Bootstrap css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets-2/css/vendors/bootstrap.css') }}" />
@@ -39,13 +41,10 @@
     <link id="color" rel="stylesheet" href="{{ asset('assets-2/css/color-1.css') }}" media="screen" />
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets-2/css/responsive.css') }}" />
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <link rel="stylesheet" type="text/css" href="{{ asset('plugins/webix/codebase/webix.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('plugins/pivot/codebase/pivot.css') }}" />
-
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .container-filter {
             /* border: 1px solid;
@@ -55,11 +54,21 @@
         [x-cloak] {
             display: none !important;
         }
+
+        /* .webix_pivot_toolbar {
+            display: none;
+        } */
+        .webix_el_segmented {
+            display: none;
+        }
+
+        [button_id="table"],
+        [button_id="tree"],
+        [button_id="chart"] {
+            display: none !important;
+        }
     </style>
     @yield('styles')
-
-
-
 </head>
 
 <body>
@@ -117,7 +126,6 @@
                     </div>
                     <div class="nav-right col-xxl-8 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                         <ul class="nav-menus">
-
                             <li class="cart-nav onhover-dropdown">
                                 <div class="cart-box">
                                     <svg>
@@ -233,7 +241,6 @@
                                         <h6 class="lan-1">General</h6>
                                     </div>
                                 </li>
-
                                 <li class="sidebar-list"><i class="fa fa-thumb-tack"> </i><a
                                         class="sidebar-link sidebar-title link-nav" href="{{ route('dashboard') }}"
                                         wire:navigate>
@@ -244,8 +251,6 @@
                                         <svg class="fill-icon">
                                             <use href="{{ asset('/assets-2/svg/icon-sprite.svg#fill-board') }}"></use>
                                         </svg><span>Dashboard</span></a></li>
-
-
                                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                         class="sidebar-link sidebar-title" href="javascript:void(0)">
                                         <svg class="stroke-icon">
@@ -262,7 +267,6 @@
                                             </a></li>
                                         <li><a href="{{ route('production.year') }}">Year
                                             </a></li>
-
                                     </ul>
                                 </li>
                                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
@@ -283,7 +287,6 @@
                                             </a></li>
                                         <li><a href="{{ route('claim.outstanding-claim') }}">Outstanding Claim
                                             </a></li>
-
                                     </ul>
                                 </li>
                                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
@@ -304,12 +307,10 @@
                                                 <li><a
                                                         href="{{ route('consolidated-surplus-uw.surplus-uw-long-term') }}">Surplus
                                                         UW Long Term
-
                                                     </a></li>
                                                 <li><a
                                                         href="{{ route('consolidated-surplus-uw.profit-loss-long-term') }}">Profit/Loss
                                                         Long Term
-
                                                     </a></li>
                                             </ul>
                                         </li>
@@ -318,18 +319,14 @@
                                             <ul class="nav-sub-childmenu submenu-content">
                                                 <li><a href="{{ route('consolidated-surplus-uw.surplus-uw-year') }}">Surplus
                                                         UW Year
-
                                                     </a></li>
                                                 <li><a href="{{ route('consolidated-surplus-uw.profit-loss-year') }}">Profit
                                                         / Loss Year
-
-
                                                     </a></li>
                                             </ul>
                                         </li>
                                     </ul>
                                 </li>
-
                                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                         class="sidebar-link sidebar-title" href="javascript:void(0)">
                                         <svg class="stroke-icon">
@@ -340,17 +337,14 @@
                                             <use href="{{ asset('/assets-2/svg/icon-sprite.svg#fill-ecommerce') }}">
                                             </use>
                                         </svg><span>Search CIF
-
                                         </span></a>
                                     <ul class="sidebar-submenu">
                                         <li><a href="{{ route('search-cif.surplus-uw-long-term') }}">Search
                                                 CIF(Surplus UW Long Term)
-
                                             </a></li>
                                         <li><a href="{{ route('search-cif.surplus-uw-year') }}">Search CIF(Surplus UW
                                                 Year)
                                             </a></li>
-
                                     </ul>
                                 </li>
                             </ul>
@@ -382,7 +376,6 @@
     <script src="{{ asset('assets-2/js/jquery.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"
         integrity="sha256-sw0iNNXmOJbQhYFuC9OF2kOlD5KQKe1y5lfBn4C9Sjg=" crossorigin="anonymous"></script>
-
     <!-- Bootstrap js-->
     <script src="{{ asset('assets-2/js/bootstrap/bootstrap.bundle.min.js') }}"></script>
     <!-- feather icon js-->
@@ -400,18 +393,20 @@
     <script src="{{ asset('assets-2/js/slick/slick.js') }}"></script>
     <script src="{{ asset('assets-2/js/header-slick.js') }}"></script>
     <script src="{{ asset('assets-2/js/header-slick.js') }}"></script>
-    <script src="{{ asset('assets-2/js/jquery-collapse/src/jquery.collapse.js') }}"></script>
+    <script src="{{ asset('assets-2/js/flat-pickr/flatpickr.js') }}"></script>
+    <script src="{{ asset('assets-2/js/flat-pickr/custom-flatpickr.js') }}"></script>
+    <script src="{{ asset('assets-2/js/height-equal.js') }}"></script>
 
+    <script src="{{ asset('assets-2/js/jquery-collapse/src/jquery.collapse.js') }}"></script>
     <script src="{{ asset('plugins/webix/codebase/webix.js') }}"></script>
     <script src="{{ asset('plugins/pivot/codebase/pivot.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- calendar js-->
     <!-- Plugins JS Ends-->
     <!-- Theme js-->
     <script src="{{ asset('assets-2/js/script.js') }}"></script>
     <!-- Plugin used-->
-
-
     <script>
         serialize = function(obj) {
             var str = [];
@@ -430,7 +425,6 @@
                 'NO_POLIS': $$("NO_POLIS").getValue(),
             }
         }
-
         const rupiah = (number) => {
             return new Intl.NumberFormat("id-ID", {
                 style: "currency",
@@ -470,29 +464,46 @@
                     },
                 ]
             };
-
         }
 
-        function renderPivot(pivotRows, toolbar = getToolbar()) {
-            var rows = [toolbar];
-            if (Array.isArray(pivotRows)) {
-                Array.prototype.push.apply(rows, pivotRows);
-            } else {
-                rows.push(pivotRows);
+
+        class MyBackend extends pivot.services.Backend {
+            data() {
+                if (this.app.$data)
+                    return webix.promise.resolve(this.app.$data);
+                else
+                    return super.data();
             }
-            webix.CustomScroll.init();
-            return new webix.ui({
-                container: "container",
-                rows: [{
-                    cols: [{
-                        view: "scrollview",
-                        body: {
-                            rows: rows,
-                        },
-                    }]
-                }]
-            })
+            url(path) {
+                return this.app.config.url + (path || "");
+            }
         }
+
+        webix.protoUI({
+            name: "pivot-load",
+            load(url, structure, fields) {
+                let $this = this;
+                return (new Promise(function(resolve, reject) {
+                    try {
+                        $pivot.showProgress({
+                            type: "top"
+                        });
+                        $this.getService('local')._app.refresh();
+                        $this.clearAll();
+                        $this.getService("backend")._url = url;
+                        $this.getService("local").getData(true).then(() => {
+                            resolve();
+                            $this.setStructure(structure);
+
+                        });
+                    } catch (error) {
+                        console.log(error);
+                        reject();
+                    }
+                }));
+            },
+        }, webix.ui.pivot);
+
         webix.attachEvent("onBeforeAjax",
             function(mode, url, params, x, headers, files, defer) {
                 defer.then(function(data) {
@@ -502,17 +513,121 @@
                 }, function(x) {
                     console.log("err", x)
                 });
+            });
+        webix.CustomScroll.init();
 
+        function renderPivot(url, structure = null, MyBackend) {
+            webix.ui({
+                container: "container",
+                rows: [{
+                    cols: [{
+                        view: "scrollview",
+                        body: {
+                            rows: [
+                                // getToolbar(),
+                                {
+                                    structure,
+                                    id: 'pivot',
+                                    view: "pivot-load",
+                                    on: {
+                                        onInit: function() {
+                                            $pivot = this;
+                                            webix.extend($$("pivot"), webix
+                                                .ProgressBar);
+                                            console.log('onInit pivot');
+                                        },
+                                        onFilterChange: function() {
+                                            console.log('filter changed');
+                                            $pivot.hideProgress();
+                                        }
+                                    },
+                                    datatable: {
+                                        cleanRows: true,
+                                        minX: true,
+                                        maxX: true,
+                                        footer: "sumOnly",
+                                        rowHeight: 45,
+                                        rowLineHeight: 45,
+                                        scheme: {
+                                            $init: function(obj) {
+                                                // jika ingin menambah atau mengurangi value, lakukan disini.
+                                            },
+                                        },
+                                        on: {
+                                            onStructureLoad: (function() {
+                                                console.log(
+                                                    'onStructureLoad');
+                                                var columns = this.config
+                                                    .columns;
+                                                for (var i = 1; i < columns
+                                                    .length; i++) {
+                                                    columns[i].header[0]
+                                                        .text = $pivot
+                                                        .getStructure()
+                                                        .values[(i - 1)]
+                                                        .name;
+                                                    columns[i].format =
+                                                        function(
+                                                            value) {
+                                                            return rupiah(
+                                                                value);
+                                                        };
+                                                    columns[i].footer[0]
+                                                        .text = rupiah(
+                                                            columns[i]
+                                                            .footer[0]
+                                                            .text);
+                                                }
+                                            }),
+                                            onBeforeLoad: (function() {
+                                                console.log('onBeforeLoad');
+                                                $pivot.showProgress({
+                                                    type: "top"
+                                                });
+                                            }),
+                                            onAfterLoad: (function() {
+                                                console.log('onAfterLoad');
+                                                this.eachColumn(function(
+                                                    col) {
+                                                    if (col) {
+                                                        this.adjustColumn(
+                                                            col,
+                                                            true
+                                                        );
+                                                    };
+                                                })
+                                                this.closeAll();
+                                                $pivot.hideProgress();
+                                            }),
+                                            onBeforeRender: (function(config) {
+                                                console.log(
+                                                    'onBeforeRender');
+                                            }),
+                                            onAfterRender: (function(config) {
+                                                console.log(
+                                                    'onAfterRender');
+                                            }),
+                                        },
+                                    },
+                                    override: new Map([
+                                        [pivot.services.Backend, MyBackend]
+                                    ]),
+                                }
+                            ],
+                        },
+                    }]
+                }]
             });
 
+        }
 
-        $("#container").parent().css('overflow', 'auto');
-        
+        document.addEventListener('livewire:navigated', function() {
+            $(".select2").select2();
+        });
+
+        // $("#container").parent().css('overflow', 'auto');
     </script>
     @yield('scripts')
-
-
 </body>
-
 
 </html>

@@ -14,13 +14,82 @@ class YearServiceImplement extends Service implements YearService
     $this->mvAgenRepository = $mvAgenRepository;
   }
 
+  public function getFilterProdDateTime($query = [])
+  {
+    $builder = $this->builder();
+    $builder->addSelect(DB::raw("
+    A.PRODDATETIME as PRODDATETIME"));
+    $builder->groupBy(
+      DB::raw('A.PRODDATETIME'),
+    );
+    $builder->orderBy('PRODDATETIME', 'desc');
+    return $builder->get()->toArray();
+  }
+  public function getFilterBusiness($query = [])
+  {
+    $builder = $this->builder();
+    $builder->addSelect(DB::raw("
+    LB.LBU_NOTE as BUSINESS"));
+    $builder->groupBy(
+      DB::raw('LB.LBU_NOTE'),
+    );
+    $builder->orderBy('BUSINESS', 'asc');
+    return $builder->get()->toArray();
+  }
+  public function getFilterCabang($query = [])
+  {
+    $builder = $this->builder();
+    $builder->addSelect(DB::raw("
+    LC.CABANG as CABANG"));
+    $builder->groupBy(
+      DB::raw('LC.CABANG'),
+    );
+    $builder->orderBy('CABANG', 'asc');
+    return $builder->get()->toArray();
+  }
+  public function getFilterClientName($query = [])
+  {
+    $builder = $this->builder();
+    $builder->addSelect(DB::raw("
+    MC.MCL_NAME as CLIENT_NAME"));
+    $builder->groupBy(
+      DB::raw('MC.MCL_NAME'),
+    );
+    $builder->orderBy('CLIENT_NAME', 'asc');
+    return $builder->get()->toArray();
+  }
+  public function getFilterNoCif($query = [])
+  {
+    $builder = $this->builder();
+    $builder->addSelect(DB::raw("
+    A.NO_CIF as NO_CIF"));
+    $builder->groupBy(
+      DB::raw('A.NO_CIF'),
+    );
+    $builder->orderBy('NO_CIF', 'asc');
+    return $builder->get()->toArray();
+  }
+  public function getFilterNoPolis($query = [])
+  {
+    $builder = $this->builder();
+    $builder->addSelect(DB::raw("
+    A.NO_POLIS as NO_POLIS"));
+    $builder->groupBy(
+      DB::raw('A.NO_POLIS'),
+    );
+    $builder->orderBy('NO_POLIS', 'asc');
+    return $builder->get()->toArray();
+  }
+
+
   public function getDataset($query = [])
   {
 
-    if (isset($query['FILTER']) && count($query) == 1) {
+    if (isset($query['FILTER']) && count($query) == 1)
+    {
       return collect();
     }
-    
+
     $columns = array(
       "SOURCE_DATA"                   => "SOURCE_DATA",
       "PRODDATETIME"                  => "A.PRODDATETIME",
@@ -66,14 +135,52 @@ class YearServiceImplement extends Service implements YearService
     );
 
 
-    $builder = DB::table("Warehouse_Asm_SPK.dbo.prodclaimuwmththn_GABUNGAN_view AS A");
-
-
+    $builder = $this->builder();
 
     foreach ($columns as $alias => $column)
     {
       $builder->addSelect(DB::raw($column . " AS " . "[$alias]"));
     }
+
+    if (isset($query['filterProdDateTime']))
+    {
+      $builder->where(DB::raw("A.PRODDATETIME"), "=", "$query[filterProdDateTime]");
+    }
+
+    if (isset($query['filterCabang']))
+    {
+      $builder->where("MC.MCL_NAME", "=", "$query[filterCabang]");
+    }
+    
+    if (isset($query['filterBusiness']))
+    {
+      $builder->where("LB.LBU_NOTE", "=", "$query[filterBusiness]");
+    }
+    
+    if (isset($query['filterClientName']))
+    {
+      $builder->where("MC.MCL_NAME", "=", "$query[filterClientName]");
+    }
+
+    if (isset($query['filterNoCif']))
+    {
+      $builder->where("A.NO_CIF", "=", "$query[filterNoCif]");
+    }
+
+    if (isset($query['filterNoPolis']))
+    {
+      $builder->where("A.NO_POLIS", "=", "$query[filterNoPolis]");
+    }
+
+    $dataset = $builder->limit(2000)->get();
+
+    return $dataset;
+  }
+
+
+  public function builder()
+  {
+    $builder = DB::table("Warehouse_Asm_SPK.dbo.prodclaimuwmththn_GABUNGAN_view AS A");
 
     $builder->join("Warehouse_Asm_SPK.dbo.MV_AGEN AS MA", "A.LAG_ID", "=", "MA.LAG_AGEN_ID");
     $builder->join("Warehouse_Asm_SPK.dbo.LST_CABANG AS LC", "A.LDC_ID", "=", "LC.LDC_ID");
@@ -82,24 +189,7 @@ class YearServiceImplement extends Service implements YearService
     $builder->join("Warehouse_Asm_SPK.dbo.LST_MO AS MO", "A.LMO_ID", "=", "MO.LMO_ID", "LEFT OUTER");
     $builder->join("Warehouse_Asm_SPK.dbo.MST_CLIENT AS MC", "A.CLIENT_ID", "=", "MC.MCL_ID", "LEFT OUTER");
     $builder->join("Warehouse_Asm_SPK.dbo.LST_JENIS_COAS AS JN_COAS", "A.MDS_JN_COAS", "=", "JN_COAS.MDS_JN_COAS", "LEFT OUTER");
-
-    if (isset($query['CLIENT_NAME']))
-    {
-      $builder->where("MC.MCL_NAME", "like", "%$query[CLIENT_NAME]%");
-    }
-
-    if (isset($query['NO_CIF']))
-    {
-      $builder->where("A.NO_CIF", "like", "%$query[NO_CIF]%");
-    }
-
-    if (isset($query['NO_POLIS']))
-    {
-      $builder->where("A.NO_POLIS", "like", "%$query[NO_POLIS]%");
-    }
-
-    $dataset = $builder->limit(2000)->get();
-
-    return $dataset;
+    $builder->limit(2000);
+    return $builder;
   }
 }

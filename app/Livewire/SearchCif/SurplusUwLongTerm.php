@@ -2,6 +2,7 @@
 
 namespace App\Livewire\SearchCif;
 
+use App\Services\ConsolidatedSurplusUw\SurplusUw\LongTerm\LongTermService;
 use Livewire\Component;
 
 class SurplusUwLongTerm extends Component
@@ -9,10 +10,16 @@ class SurplusUwLongTerm extends Component
     protected $service;
     public $params;
 
-    public $dataset;
-    public $dataTable;
+    public $filterPeriode = [];
+    public $filterBusiness = [];
+    public $filterCabang = [];
+    public $filterClientName = [];
+    public $filterNoCif = [];
+    public $filterNoPolis = [];
 
-    public function boot(SurplusUwLongTerm $service)
+    public $dataset;
+
+    public function boot(LongTermService $service)
     {
         $this->service = $service;
     }
@@ -20,6 +27,13 @@ class SurplusUwLongTerm extends Component
     public function mount()
     {
         \setPageTitle('Search CIF(Surplus UW Long Term)');
+
+        $this->filterPeriode    = $this->service->getFilterPeriode();
+        $this->filterBusiness    = $this->service->getFilterBusiness();
+        $this->filterCabang    = $this->service->getFilterCabang();
+        $this->filterClientName = $this->service->getFilterClientName();
+        $this->filterNoPolis    = $this->service->getFilterNoPolis();
+        $this->filterNoCif      = $this->service->getFilterNoCif();
     }
     public function render()
     {

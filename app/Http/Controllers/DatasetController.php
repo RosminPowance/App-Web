@@ -51,12 +51,14 @@ class DatasetController extends Controller
 
     public function getDatasetProductionLongTerm(Request $request)
     {
-        $dataset = $this->productionLongTermService->getDataset();
+        $query   = array_filter($request->query());
+        $dataset = $this->productionLongTermService->getDataset($query);
         return response()->json($dataset, 200, [], JSON_NUMERIC_CHECK);
     }
     public function getDatasetProductionYear(Request $request)
     {
-        $dataset = $this->productionYearService->getDataset();
+        $query   = array_filter($request->query());
+        $dataset = $this->productionYearService->getDataset($query);
         return response()->json($dataset, 200, [], JSON_NUMERIC_CHECK);
     }
     public function getDatasetConsolidatedSurplusUwLongTerm(Request $request)
@@ -73,7 +75,8 @@ class DatasetController extends Controller
     }
     public function getDatasetConsolidatedProfitLossLongTerm(Request $request)
     {
-        $dataset = $this->profitLossLongTermService->getDataset();
+        $query   = array_filter($request->query());
+        $dataset = $this->profitLossLongTermService->getDataset($query);
         return response()->json($dataset, 200, [], JSON_NUMERIC_CHECK);
     }
     public function getDatasetConsolidatedProfitLossYear(Request $request)
@@ -84,17 +87,20 @@ class DatasetController extends Controller
     }
     public function getDatasetAcceptedClaim(Request $request)
     {
-        $dataset = $this->acceptedClaimService->getDataset();
+        $query   = array_filter($request->query());
+        $dataset = $this->acceptedClaimService->getDataset($query);
         return response()->json($dataset, 200, [], JSON_NUMERIC_CHECK);
     }
     public function getDatasetRejectClaim(Request $request)
     {
-        $dataset = $this->rejectClaimService->getDataset();
+        $query   = array_filter($request->query());
+        $dataset = $this->rejectClaimService->getDataset($query);
         return response()->json($dataset, 200, [], JSON_NUMERIC_CHECK);
     }
     public function getDatasetOutstandingClaim(Request $request)
     {
-        $dataset = $this->outstandingClaimService->getDataset();
+        $query   = array_filter($request->query());
+        $dataset = $this->outstandingClaimService->getDataset($query);
         return response()->json($dataset, 200, [], JSON_NUMERIC_CHECK);
     }
 }

@@ -1,7 +1,10 @@
 // Custom-flatpickr JS
 (function () {
   // 1. Default Date
-  flatpickr("#datetime-local", {});
+  flatpickr(".datetime-local", {
+    dateFormat: "d-m-Y",
+
+  });
 
   // 2.Human Friendly
   flatpickr("#human-friendly", {

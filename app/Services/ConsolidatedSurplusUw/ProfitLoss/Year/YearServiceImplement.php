@@ -16,6 +16,10 @@ class YearServiceImplement extends Service implements YearService
 
   public function getDataset($query = null)
   {
+    if (isset($query['FILTER']) && count($query) == 1) {
+      return collect();
+    }
+    
     $columns = array(
       "SOURCE_DATA"                   => "SOURCE_DATA",
       "PRODDATETIME"                  => "A.PRODDATETIME",
